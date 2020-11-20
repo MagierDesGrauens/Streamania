@@ -1,4 +1,4 @@
-# Video-Streaming Plattform
+# Streamania
 - Videos (von YouTube benutzen)
 - Genres (hat Parent -> Horror -> Horror-Thriller (Parent: Thriller + Horror), Horror-Komödie (Parent: Horror + Komödie) etc.)
 - Filme
