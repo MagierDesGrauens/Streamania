@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de-de">
+<body>
+    <head>
+        <title>{% block title %}| Streamania{% endblock %}</title>
+
+        <link rel="stylesheet" href="css/{{ CSS_FILE }}" />
+    </head>
+    <main>
+        Icon via SVG-Tag:
+        <svg class="bi" width="32" height="32" fill="currentColor">
+            <use xlink:href="svg/bootstrap-icons.svg#toggles"/>
+        </svg>
+        <br>
+        Icon via i-Tag:
+        <i class="bi-toggles"></i>
+
+        <nav class="navigation">
+            <ul>
+                <li>Startseite</li>
+            </ul>
+        </nav>
+
+        <div class="container">
+            {% block content %}
+                Default Content
+            {% endblock %}
+        </div>
+    </main>
+    <footer>
+        Footer
+    </footer>
+
+    <!-- Vendors -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+    <!-- Own scripts -->
+    <script src="js/iconsPlugin.js"></script>
+</body>
+</html>
