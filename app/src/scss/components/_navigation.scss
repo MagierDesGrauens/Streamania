@@ -1,9 +1,8 @@
-$navColor: #fff;
-
-body {
-    background-color: $navColor;
-
-    ul li {
-        color: #ffee00;
+.navigation {
+    .nav-link {
+        color: #ffffff;
+    }
+    .dropdown-menu {
+        background-color: $color-black;
     }
 }
