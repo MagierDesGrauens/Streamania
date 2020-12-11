@@ -18,6 +18,10 @@ try {
 
 echo '  -> Writing css...';
 
+if (!file_exists(__DIR__ . '/../public/css')) {
+    mkdir(__DIR__ . '/../public/css');
+}
+
 $styleFiles = array_diff(scandir(__DIR__ . '/../public/css'), ['.', '..']);
 
 foreach ($styleFiles as $file) {
