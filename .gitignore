@@ -1,2 +1,4 @@
 lib/*
+!lib/Autoload.php
+!lib/Streamania
 public/css/*
