@@ -2,7 +2,11 @@
 
 require_once '../lib/Autoload.php';
 
-$cssFile = array_diff(scandir('css'), ['.', '..'])[2];
+use \Streamania\Database;
+use \Streamania\Config;
+
+$cssFiles = array_diff(scandir('css'), ['.', '..']) ?? [];
+$jsFiles = array_diff(scandir('js'), ['.', '..']) ?? [];
 $loader = new \Twig\Loader\FilesystemLoader('../app/view/');
 $twig = new \Twig\Environment($loader, []);
 $site = ucfirst($_GET['site'] ?? 'index');
@@ -12,6 +16,9 @@ $siteController = $site . 'Controller';
 $modelPath = '../app/model/' . $site . 'Model.php';
 $siteModel = $site . 'Model';
 $viewData = [];
+
+// Datenbank Verbindung aufbauen
+Database::connect();
 
 if (file_exists($controllerPath))
 {
@@ -26,7 +33,8 @@ if (file_exists($modelPath))
 $model = new $siteModel();
 $controller = new $siteController($model);
 $renderData = [
-    'CSS_FILE' => $cssFile
+    'STYLE_FILES' => $cssFiles,
+    'SCRIPT_FILES' => $jsFiles
 ];
 
 if (method_exists ($controller, $action . 'Action')) {
