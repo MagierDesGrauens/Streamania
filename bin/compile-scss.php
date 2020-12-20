@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../lib/Sass/scss.inc.php';
-
 use ScssPhp\ScssPhp\Compiler;
+
+require_once __DIR__ . '/../lib/Sass/scss.inc.php';
 
 $css = '';
 $scss = new Compiler();
@@ -16,7 +16,7 @@ try {
     die();
 }
 
-echo '  -> Writing css...';
+echo '  -> Writing css...' . PHP_EOL;
 
 if (!file_exists(__DIR__ . '/../public/css')) {
     mkdir(__DIR__ . '/../public/css');
