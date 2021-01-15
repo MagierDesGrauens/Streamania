@@ -1,6 +1,7 @@
 // Vendor Plugins
-vendor/bootstrap.js
 vendor/jquery.js
+vendor/bootstrap.js
+
 
 // Streamania Plugins
 plugins/iconsPlugin.js
