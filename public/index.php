@@ -50,6 +50,8 @@ if (!empty($viewData)) {
         $renderData[$key] = $value;
     }
 
+    $renderData['WEB_BASE'] = Config::value('Website', 'base');
+
     echo $twig->render(
         $viewData[0],
         $renderData
