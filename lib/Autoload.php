@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * Klasse AutoLoader
+ */
 class AutoLoader
 {
+    /**
+     * @var string
+     */
     public static $path = '';
 
-    public static function load(string $path)
+    /**
+     * @param string $path
+     */
+    public static function load(string $path): void
     {
         AutoLoader::$path = $path;
 

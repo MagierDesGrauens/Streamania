@@ -4,7 +4,9 @@
     <head>
         <title>{% block title %}| Streamania{% endblock %}</title>
 
-        <link rel="stylesheet" href="css/{{ CSS_FILE }}" />
+        {% for styleFile in STYLE_FILES %}
+            <link rel="stylesheet" href="css/{{ styleFile }}" />
+        {% endfor %}
     </head>
     <main>
         Icon via SVG-Tag:
@@ -52,11 +54,8 @@
         Footer
     </footer>
 
-    <!-- Vendors -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.js"></script>
-
-    <!-- Own scripts -->
-    <script src="js/iconsPlugin.js"></script>
+    {% for scriptFile in SCRIPT_FILES %}
+        <script src="js/{{ scriptFile }}"></script>
+    {% endfor %}
 </body>
 </html>

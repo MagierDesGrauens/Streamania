@@ -2,11 +2,26 @@
 
 namespace Streamania;
 
+/**
+ * Klasse Config
+ */
 class Config
 {
+    /**
+     * @var bool
+     */
     private static $iniRead = false;
+
+    /**
+     * @var array
+     */
     private static $config = [];
 
+    /**
+     * @param string $group
+     * @param string $key
+     * @return string
+     */
     public static function value(string $group, string $key): string
     {
         if (!self::$iniRead) {
