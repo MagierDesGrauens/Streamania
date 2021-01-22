@@ -43,7 +43,10 @@ if (method_exists ($controller, $action . 'Action')) {
 
 if (method_exists($model, $action . 'View')) {
     $viewData = $model->{$action . 'View'}();
+} else {
+    echo $twig->render('error/404.html.twig', $renderData);
 }
+
 
 if (!empty($viewData)) {
     foreach ($viewData[1] as $key => $value) {
@@ -52,10 +55,10 @@ if (!empty($viewData)) {
 
     $renderData['WEB_BASE'] = Config::value('Website', 'base');
 
-    echo $twig->render(
+    $render = $twig->render(
         $viewData[0],
         $renderData
     );
-} else {
-    echo $twig->render('error/404.html.twig', $renderData);
+
+    echo $render;
 }

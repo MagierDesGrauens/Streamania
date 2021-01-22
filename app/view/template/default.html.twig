@@ -2,20 +2,13 @@
 <html lang="de-de">
 <body>
     <head>
-        <title>{% block title %}| Streamania{% endblock %}</title>
+        <title>{% block title %}{% endblock %} | Streamania</title>
 
         {% for styleFile in STYLE_FILES %}
             <link rel="stylesheet" href="css/{{ styleFile }}" />
         {% endfor %}
     </head>
     <main>
-        Icon via SVG-Tag:
-        <svg class="bi" width="32" height="32" fill="currentColor">
-            <use xlink:href="svg/bootstrap-icons.svg#toggles"/>
-        </svg>
-        <br>
-        Icon via i-Tag:
-        <i class="bi-toggles"></i>
         <nav class="navigation navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand" href="{{ WEB_BASE }}/">STREAMANIA</a>
@@ -45,15 +38,20 @@
             </div>
         </nav>
 
-        <div class="container">
+        <div class="container container__main">
             {% block content %}
                 Default Content
             {% endblock %}
         </div>
     </main>
-    <footer>
+
+    <footer class="footer">
         <div class="container">
-            Footer
+            {% set currYear = 'now' | date('Y') %}
+            {% set createYear = '2021' %}
+            {% set year = (createYear != currYear) ? '2021 - ' ~ currYear : createYear %}
+
+            &copy; {{ year }} by Tobias Vedder, Jerome Lemoine, Mirco Rohleff - ITM1 - IT119
         </div>
     </footer>
 
