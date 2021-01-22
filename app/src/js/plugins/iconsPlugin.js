@@ -1,15 +1,14 @@
-$('[class^="bi-"]').each(function() {
-    /*
-        @todo <i> Umwandeln in svg
+let elems = document.querySelectorAll('[class^="bi-"]');
 
-        <i class="bi-toggles"></i>
-        =
-        <svg class="bi" width="32" height="32" fill="currentColor">
-            <use xlink:href="svg/bootstrap-icons.svg#toggles"/>
-        </svg>
-
-        Steps:
-        - <i> ausblenden
-        - dafür svg-code unter <i> einfügen
-    */
+elems.forEach(elem => {
+    elem.classList.forEach(classes => {
+        if (classes.startsWith('bi-')) {
+            iconClass = classes.split('-')[1];
+        }
+    });
+    $(elem).replaceWith(`
+    <svg class="bi" width="32" height="32" fill="currentColor">
+        <use xlink:href="svg/bootstrap-icons.svg#${iconClass}"/>
+    </svg>
+    `);
 });
