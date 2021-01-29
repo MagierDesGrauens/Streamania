@@ -1,5 +1,15 @@
 {% extends 'template/default.html.twig' %}
 
+{% block site_title %}
+    Startseite
+{% endblock %}
+
+{% block content_title %}
+    Startseite
+{% endblock %}
+
 {% block content %}
-    {{ name }}
+    Das ist die Startseite.<br>
+    <br>
+    Der im Controller übergebene Name lautet: {{ name }}
 {% endblock %}
