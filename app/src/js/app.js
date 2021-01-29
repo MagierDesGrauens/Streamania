@@ -4,4 +4,4 @@ vendor/bootstrap.js
 
 
 // Streamania Plugins
-plugins/iconsPlugin.js
+plugins/icons-plugin.js
