@@ -2,43 +2,101 @@
 <html lang="de-de">
 <body>
     <head>
-        <title>{% block title %}{% endblock %} | Streamania</title>
+        <title>{% block site_title %}{% endblock %} | Streamania</title>
 
         {% for styleFile in STYLE_FILES %}
-            <link rel="stylesheet" href="css/{{ styleFile }}" />
+            <link rel="stylesheet" href="{{ WEB_BASE }}css/{{ styleFile }}" />
         {% endfor %}
     </head>
     <main>
         <nav class="navigation navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" href="{{ WEB_BASE }}/">STREAMANIA</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" href="{{ WEB_BASE }}">STREAMANIA</a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ WEB_BASE }}/series">Serien<span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ WEB_BASE }}/movies">Filme</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Admin
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item nav-link" href="{{ WEB_BASE }}/admin/navigation">Navigation</a>
-                        <a class="dropdown-item nav-link" href="{{ WEB_BASE }}/admin/panels">Panels</a>
-                        <a class="dropdown-item nav-link" href="{{ WEB_BASE }}/admin/users">Users</a>
-                        </div>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ WEB_BASE }}?site=series">
+                                Serien
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ WEB_BASE }}?site=movies">
+                                Filme
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                User
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=user&action=login"
+                                >Login</a>
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=user&action=register"
+                                >Registrierung</a>
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=user&action=friendslist"
+                                >Freundesliste</a>
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=user&action=logout"
+                                >Logout</a>
+                            </div>
+                        </li>
+                        <!--
+                        Vorerst entfernt - wird eventuell später angebunden
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=admin&action=navigation"
+                                >Navigation</a>
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=admin&action=panels"
+                                >Panels</a>
+                                <a
+                                    class="dropdown-item nav-link"
+                                    href="{{ WEB_BASE }}?site=admin&action=users"
+                                >Users</a>
+                            </div>
+                        </li>
+                        -->
                     </ul>
                 </div>
             </div>
         </nav>
 
         <div class="container container__main">
+            <div class="d-none">{% block content_title %}{% endblock %}</div>
+            {% set content_title_block = block('content_title') %}
+            {% if content_title_block is not empty %}
+                <div class="container__title">
+                    <h1>
+                        {{ content_title_block|raw }}
+                    </h1>
+                </div>
+            {% endif %}
+
             {% block content %}
                 Default Content
             {% endblock %}
@@ -56,7 +114,7 @@
     </footer>
 
     {% for scriptFile in SCRIPT_FILES %}
-        <script src="js/{{ scriptFile }}"></script>
+        <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
     {% endfor %}
 </body>
 </html>
