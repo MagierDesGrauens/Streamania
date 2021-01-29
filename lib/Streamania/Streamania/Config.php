@@ -8,6 +8,11 @@ namespace Streamania;
 class Config
 {
     /**
+     * @var array
+     */
+    private static $errorList = [];
+
+    /**
      * @var bool
      */
     private static $iniRead = false;
@@ -31,6 +36,22 @@ class Config
             }
         }
 
-        return self::$config[$group][$key] ?? '';
+        $value = self::$config[$group][$key] ?? null;
+
+        if ($value === null) {
+            self::$errorList[] = ['group' => $group, 'key' => $key];
+
+            $value = '';
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getErrorList(): array
+    {
+        return self::$errorList;
     }
 }
