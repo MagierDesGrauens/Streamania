@@ -18,7 +18,7 @@ AWE Projekt - Video Plattform by TV und JL
 - `git clone https://github.com/twigphp/Twig.git lib/Twig`
 - `git clone https://github.com/scssphp/scssphp.git lib/Sass`
 - `mv lib/Twig/src lib/Twig/Twig`
-- Change in `./bin/compile-scss.bat` the path of `C:\xampp\` to the location of your xampp
+- Change in `./bin/console.bat` the path of `C:\xampp\` to the location of your xampp
 
 ## Console Commands
 - Compile SCSS & JS: `bin/console.bat compile`
