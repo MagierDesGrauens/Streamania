@@ -60,7 +60,7 @@ class Installer
     public function installDatabase(): void
     {
         if (!Database::tableExists('Tabellenname')) {
-            $sql = 'Inhalt der sql Datei';
+            $sql = file_get_contents(__DIR__ . '/resources/sql/streamania2.sql');
             Database::fetch($sql);
 
             $this->installed = true;
