@@ -10,7 +10,8 @@ $scss = new Compiler();
 echo '  -> Compling scss...' . PHP_EOL;
 
 try {
-    $css = $scss->compile('@import "' . __DIR__ . '/../app/src/scss/app.scss";');
+    $scss->setImportPaths(__DIR__ . '/../app/src/scss/');
+    $css = $scss->compile('@import "app.scss";');
 } catch (\Exception $e) {
     echo PHP_EOL . $e->getMessage();
     die();
