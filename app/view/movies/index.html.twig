@@ -9,5 +9,19 @@
 {% endblock %}
 
 {% block content %}
-    Inhalt dieser Seite
+    <div class="row no-gutters panel">
+        {% for video in movies %}
+            <a class="col-3 panel__element" href="{{ video.src }}" target="_blank">
+                <div class="element__title">
+                    <h4>
+                        {{ video.name }}
+                    </h4>
+                </div>
+                <div class="element__img">
+                    <img src="{{ video.image }}" class="img-fluid">
+                </div>
+                <div class="element__blur"></div>
+            </a>
+        {% endfor %}
+    </div>
 {% endblock %}

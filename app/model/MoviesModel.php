@@ -4,12 +4,10 @@ use \Streamania\Model;
 
 class MoviesModel extends Model
 {
-    public function __construct()
-    {
-    }
+    public $movies;
 
     public function IndexView()
     {
-        return ['movies/index.html.twig', []];
+        return ['movies/index.html.twig', ['movies' => $this->movies]];
     }
 }

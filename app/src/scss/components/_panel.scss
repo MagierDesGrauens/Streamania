@@ -1,0 +1,23 @@
+.panel {
+    width: 100%;
+}
+
+.panel__element {
+    padding: 5px !important;
+    height: 300px;
+    width: 250px;
+    position: relative;
+
+    &:hover {
+        .element__title {
+            h4 {
+                background-color: rgba(0, 0, 0, 0.6);
+                color: white;
+            }
+        }
+
+        .element__blur {
+            background-color: rgba(0, 0, 0, 0.0);
+        }
+    }
+}

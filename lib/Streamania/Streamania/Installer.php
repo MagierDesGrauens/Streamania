@@ -59,11 +59,24 @@ class Installer
 
     public function installDatabase(): void
     {
-        if (!Database::tableExists('Tabellenname')) {
+        if (!Database::tableExists('users')) {
             $sql = file_get_contents(__DIR__ . '/resources/sql/streamania2.sql');
             Database::fetch($sql);
 
             $this->installed = true;
+        }
+    }
+
+    public function installDemodata(): void
+    {
+        if (Database::tableExists('videos')) {
+            $sql = file_get_contents(__DIR__ . '/resources/sql/demodata.sql');
+            Database::fetch($sql);
+
+            $this->installed = true;
+        } else {
+            printf('Table "videos" not found. Please execute install database first');
+            $this->installed = false;
         }
     }
 

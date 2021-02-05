@@ -4,12 +4,10 @@ use \Streamania\Model;
 
 class SeriesModel extends Model
 {
-    public function __construct()
-    {
-    }
+    public $series;
 
     public function IndexView()
     {
-        return ['series/index.html.twig', []];
+        return ['series/index.html.twig', ['series' => $this->series]];
     }
 }
