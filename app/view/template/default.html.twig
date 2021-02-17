@@ -75,29 +75,24 @@
                                 Filme
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                User
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=user&action=login"
-                                >Login</a>
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=user&action=register"
-                                >Registrierung</a>
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=user&action=friendslist"
-                                >Freundesliste</a>
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=user&action=logout"
-                                >Logout</a>
-                            </div>
-                        </li>
+                        {% if LOGGED_IN %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=logout">
+                                    Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=register">
+                                    Registrieren
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=login">
+                                    Login
+                                </a>
+                            </li>
+                        {% endif %}
                         <!--
                         Vorerst entfernt - wird eventuell später angebunden
 
