@@ -2,8 +2,11 @@
 
 require_once '../lib/Autoload.php';
 
-use \Streamania\Database;
 use \Streamania\Config;
+use \Streamania\Database;
+use \Streamania\User;
+
+session_start();
 
 $cssFiles = array_diff(scandir('css'), ['.', '..']) ?? [];
 $jsFiles = array_diff(scandir('js'), ['.', '..']) ?? [];
@@ -21,6 +24,13 @@ $error = false;
 // Datenbank Verbindung aufbauen
 Database::connect();
 
+// User initalisieren
+User::init();
+
+if (!empty(session_id())) {
+    User::fetchBySessionId(session_id());
+}
+
 if (file_exists($controllerPath))
 {
     include_once $controllerPath;
@@ -31,10 +41,14 @@ if (file_exists($modelPath))
     include_once $modelPath;
 }
 
+defined('WEB_BASE') or
+    define('WEB_BASE', Config::value('Website', 'base'));
+
 $renderData = [
     'STYLE_FILES' => $cssFiles,
     'SCRIPT_FILES' => $jsFiles,
-    'WEB_BASE' => Config::value('Website', 'base')
+    'WEB_BASE' => Config::value('Website', 'base'),
+    'LOGGED_IN' => User::isLoggedIn()
 ];
 
 if (class_exists($siteModel)) {
