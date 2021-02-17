@@ -72,6 +72,7 @@
     <Compile Include="QueryResult.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Sql.cs" />
+    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -55,6 +55,7 @@ CREATE TABLE `rooms_users` (
 
 CREATE TABLE `users` (
   `users_id` int(8) NOT NULL,
+  `session_id` varchar(64) DEFAULT NULL,
   `mail` varchar(64) NOT NULL,
   `password` varchar(64) NOT NULL COMMENT 'SHA256',
   `username` varchar(32) NOT NULL

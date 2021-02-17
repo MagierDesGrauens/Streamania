@@ -13,16 +13,13 @@ namespace Watch2Gether
 
         public static bool init()
         {
-
-            string configPath = "../../../../../bin/config.ini";
-
             IniReader ini = new IniReader();
-            ini.parse(configPath);
+            ini.parse("../../../../../bin/config.ini");
+
             string server = ini.get("Database", "host");
             string database = ini.get("Database", "db");
             string user = ini.get("Database", "user");
             string password = ini.get("Database", "password");
-
 
             con = new MySqlConnection("SERVER=" + server + ";DATABASE=" + database + ";UID=" + user + ";PASSWORD=" + password + ";");
 

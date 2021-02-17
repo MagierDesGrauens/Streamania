@@ -1,8 +1,8 @@
 <?php
 
-use \Streamania\Database;
-
 namespace Streamania;
+
+use \Streamania\Database;
 
 /**
  * Klasse Installer
