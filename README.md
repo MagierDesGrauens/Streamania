@@ -19,9 +19,16 @@ AWE Projekt - Video Plattform by TV und JL
 - `git clone https://github.com/scssphp/scssphp.git lib/Sass`
 - `mv lib/Twig/src lib/Twig/Twig`
 - Change in `./bin/console.bat` the path of `C:\xampp\` to the location of your xampp
+- Excecute the install command
 
 ## Console Commands
+- Install: `bin/console.bat install <action>`
+  - installs `bin/config.ini`, Streamania database, demo data
 - Compile SCSS & JS: `bin/console.bat compile`
 - Compile SCSS: `bin/console.bat compile scss`
 - Compile JS: `bin/console.bat compile js`
 - Execute installer: `bin/console.bat install`
+
+## Watch2Gether - Server
+Server is in: `app\src\Watch2Gether\bin\Release\Watch2Gether.exe`<br>
+It connects to the database (host, db, user, pass) and listens on the port stored in `bin/console.ini`

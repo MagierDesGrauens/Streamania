@@ -53,29 +53,6 @@
                                 </a>
                             </li>
                         {% endif %}
-                        <!--
-                        Vorerst entfernt - wird eventuell später angebunden
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Admin
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=admin&action=navigation"
-                                >Navigation</a>
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=admin&action=panels"
-                                >Panels</a>
-                                <a
-                                    class="dropdown-item nav-link"
-                                    href="{{ WEB_BASE }}?site=admin&action=users"
-                                >Users</a>
-                            </div>
-                        </li>
-                        -->
                     </ul>
                 </div>
             </div>
@@ -108,6 +85,10 @@
         </div>
     </footer>
 
+    <script>
+        var watch2gether_socket_url = "{{ WATCH2GETHER_SOCKET_URL }}";
+        var watch2gether_port = {{ WATCH2GETHER_PORT }};
+    </script>
     {% for scriptFile in SCRIPT_FILES %}
         <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
     {% endfor %}

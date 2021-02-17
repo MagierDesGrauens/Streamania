@@ -48,7 +48,9 @@ $renderData = [
     'STYLE_FILES' => $cssFiles,
     'SCRIPT_FILES' => $jsFiles,
     'WEB_BASE' => Config::value('Website', 'base'),
-    'LOGGED_IN' => User::isLoggedIn()
+    'LOGGED_IN' => User::isLoggedIn(),
+    'WATCH2GETHER_SOCKET_URL' => Config::value('Watch2Gether', 'socket_url'),
+    'WATCH2GETHER_PORT' => Config::value('Watch2Gether', 'port')
 ];
 
 if (class_exists($siteModel)) {

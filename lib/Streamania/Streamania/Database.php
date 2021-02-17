@@ -2,7 +2,7 @@
 
 namespace Streamania;
 
-use PDO;
+use \PDO;
 
 /**
  * Klasse Database

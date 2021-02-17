@@ -1,39 +1,26 @@
 <?php
 
-use \Streamania\Database;
 use \Streamania\Installer;
 
 include_once __DIR__ . '/../lib/Autoload.php';
 
-Database::connect();
-
 $action = $argv[1] ?? '';
 $installer = new Installer();
 
-if ($action !== '--reset') {
+$methods = get_class_methods($installer);
+$methodFound = false;
+
+if (method_exists($installer, 'install' . ucfirst($action))) {
     $installer->install($action);
 } else {
-    $resetAction = $argv[2] ?? '';
+    printf(
+        'Syntax: %sPossible actions:',
+        $syntax . PHP_EOL . PHP_EOL
+    );
 
-    if ($resetAction === '') {
-        $methods = get_class_methods($installer);
-
-        printf(
-            'Syntax: install --reset <action> %sPossible actions: %s',
-            PHP_EOL . PHP_EOL,
-            PHP_EOL
-        );
-
-        foreach ($methods as $method) {
-            if (substr($method, 0, 5) === 'reset') {
-                printf(strtolower(substr($method, 5, strlen($method) - 4) . PHP_EOL));
-            }
-        }
-    } else {
-        if (method_exists($installer, 'reset' . $resetAction)) {
-            $installer->{'reset' . $resetAction}();
-        } else {
-            printf('Action "%s" not found.', $resetAction);
+    foreach ($methods as $method) {
+        if (substr($method, 0, 7) === 'install') {
+            printf(strtolower(substr($method, 7, strlen($method) - 6) . PHP_EOL));
         }
     }
 }

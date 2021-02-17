@@ -1,8 +1,8 @@
 <?php
 
-use \Streamania\Database;
-
 namespace Streamania;
+
+use \Streamania\Database;
 
 /**
  * Klasse User
@@ -24,7 +24,7 @@ class User
     private static $isLoggedIn;
     private static $exists;
 
-    public function init()
+    public static function init()
     {
         self::$id = -1;
         self::$sessionId = '';
