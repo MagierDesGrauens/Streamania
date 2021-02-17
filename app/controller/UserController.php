@@ -30,7 +30,35 @@ class UserController extends Controller
 
     public function RegisterAction()
     {
-        
+        $username = $_POST['username'] ?? '';
+        $mail = $_POST['mail'] ?? '';
+        $pass = $_POST['password'] ?? '';
+
+        if (User::isLoggedIn()) {
+            $this->model->status = User::STATE_LOGGED_IN;
+        } else {
+            if (!empty($mail) || !empty($pass) || !empty($username)) {
+                if (empty($mail) || empty($pass) || empty($username)) {
+                    $this->model->status = User::STATE_REGISTER_EMPTY;
+                } else {
+                    User::fetchByMail($mail);
+
+                    if (!User::exists()) {
+                        User::fetchByName($username);
+
+                        if (!User::exists()) {
+                            User::register($username, $mail, $pass);
+
+                            $this->model->status = User::STATE_REGISTER_SUCCESS;
+                        } else {
+                            $this->model->status = User::STATE_REGISTER_EXISTS_NAME;
+                        }
+                    } else {
+                        $this->model->status = User::STATE_REGISTER_EXISTS_MAIL;
+                    }
+                }
+            }
+        }
     }
 
     public function LogoutAction()

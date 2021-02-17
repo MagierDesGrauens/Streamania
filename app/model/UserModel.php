@@ -26,7 +26,12 @@ class UserModel extends Model
 
     public function RegisterView()
     {
-        return ['user/register.html.twig', []];
+        if ($this->status === User::STATE_LOGGED_IN) {
+            header('Location: ' . WEB_BASE);
+            die();
+        }
+
+        return ['user/register.html.twig', ['status' => $this->status]];
     }
 
     public function LogoutView()

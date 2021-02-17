@@ -12,6 +12,10 @@ class User
     const STATE_LOGGED_IN = 1;
     const STATE_LOGIN_FAILED = -1;
     const STATE_ALREADY_LOGGED_IN = -2;
+    const STATE_REGISTER_SUCCESS = 2;
+    const STATE_REGISTER_EMPTY = -1;
+    const STATE_REGISTER_EXISTS_MAIL = -2;
+    const STATE_REGISTER_EXISTS_NAME = -3;
 
     private static $id;
     private static $sessionId;
@@ -78,6 +82,30 @@ class User
         self::setFromArray($user);
     }
 
+    public static function fetchByMail($mail): void
+    {
+        self::$exists = false;
+
+        $user = Database::fetchSingle(
+            'SELECT * FROM users WHERE mail = ?',
+            [$mail]
+        );
+
+        self::setFromArray($user);
+    }
+
+    public static function fetchByName($name): void
+    {
+        self::$exists = false;
+
+        $user = Database::fetchSingle(
+            'SELECT * FROM users WHERE username = ?',
+            [$name]
+        );
+
+        self::setFromArray($user);
+    }
+
     public static function login(): void
     {
         Database::fetch(
@@ -91,6 +119,18 @@ class User
     public static function logout(): void
     {
         Database::fetch('UPDATE users SET session_id = "" WHERE users_id = ?', [self::$id]);
+    }
+
+    public static function register($username, $mail, $password): void
+    {
+        $password = hash('sha256', $password);
+
+        Database::fetch(
+            'INSERT INTO users (mail, password, username) VALUES (?, ?, ?)',
+            [$mail, $password, $username]
+        );
+
+        self::$isLoggedIn = true;
     }
 
     public static function isLoggedIn(): bool
