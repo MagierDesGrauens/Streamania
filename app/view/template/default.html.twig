@@ -83,12 +83,150 @@
 
             &copy; {{ year }} by Tobias Vedder, Jerome Lemoine, Mirco Rohleff - ITM1 - IT119
         </div>
-    </footer>
+        <div>
+            <form id="myform">
+                <input id="yt-link" type="text" placeholder="link rein da">
+                <input type="submit">
+            </form>
+            <iframe width="420" height="315"
+                    src="https://www.youtube.com/embed/tgbNymZ7vqY">
+            </iframe>
+            <iframe width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 
+            </iframe>
+            <button id="create-room">
+                Erstelle raum!
+            </button>
+        </div>
+    </footer>
     <script>
         var watch2gether_socket_url = "{{ WATCH2GETHER_SOCKET_URL }}";
         var watch2gether_port = {{ WATCH2GETHER_PORT }};
-    </script>
+        let videoTimeStamp;
+        let videoTimeStartet;
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+
+        let socket = new WebSocket("ws://localhost:2021");
+
+        socket.onopen = function(e) {
+            console.log("[open] Connection established");
+            console.log("Sending to server");
+            socket.send("room|connect|1|" + getCookie('PHPSESSID'));
+        };
+
+        socket.onmessage = function(event) {
+            console.log(`[message] Data received from server: ${event.data}`);
+            HandleMessage(event.data);
+        };
+
+        socket.onclose = function(event) {
+            if (event.wasClean) {
+                console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+            } else {
+                // e.g. server process killed or network down
+                // event.code is usually 1006 in this case
+                console.log('[close] Connection died');
+            }
+        };
+
+        socket.onerror = function(error) {
+            console.log(`[error] ${error.message}`);
+        };
+
+        function HandleMessage(msg) {
+            video|state|play / stop|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
+            let stringMsg = msg.split["|"];
+            if (stringMsg[0] === "video") {
+                if (stringMsg[1] === "state") {
+                    if (stringMsg[2] === "play") {
+                        changePlayStop("play");
+                    } else {
+                        changePlayStop("stop");
+                    }
+                    setVideoTime(stringMsg[3], stringMsg[4]);
+                } else if (stringMsg[1] === "src") {
+                    setVideoLink(stringMsg[2]);
+                }
+            } else if (stringMsg[0] === "users") {
+                if (stringMsg[1] === "add") {
+
+                } else if (stringMsg[1] === "remove") {
+
+                } else {
+
+                }
+            }
+        };
+
+        function playStop(playstate) {
+            socket.send('video|state|'+playstate+'|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED')
+            socket.send(`${playstate}|connect|1|` + getCookie('PHPSESSID'));
+        }
+
+        function changePlayStop(playstate) {
+            if (playstate === "play") {
+                //starte video
+            } else {
+                //pausiere video
+            }
+        }
+
+        function changelink(userlink) {
+            socket.send('video|src|'+userlink);
+            setTimeZero();
+        }
+
+        function setTimeZero() {
+            //zeit auf 0 setzen
+        }
+
+        function setVideoTime(stamp, started) {
+            videoTimeStamp = stamp;
+            videoTimeStartet = started;
+        }
+
+        function setVideoLink(link) {
+
+        }
+        console.log("setz video");
+        let ytlink = "";
+        let template = "https://www.youtube.com/embed/";
+        document.getElementById("myform").addEventListener('submit', function (e) {
+            e.preventDefault();
+            ytlink = document.getElementById('yt-link').value;
+
+            console.log(ytlink);
+            console.log(e);
+            let tmp = ytlink.split("/");
+
+            socket.send('video|state|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED');
+
+            let frame = document.querySelector('iframe');
+            frame.setAttribute('src', (template + tmp[tmp.length-1]));
+            frame.addEventListener('load', function (e) {
+                document.getElementsByClassName("ytp-large-play-button")[0].addEventListener('click', function (e) {
+                    console.log("start");
+                    document.getElementsByClassName("ytp-play-button")[0].addEventListener('click', function (e) {
+                        console.log("pause oder play?");
+                    });
+                });
+            });
+            // schicke link zum server
+            // fetch...
+            // weiter gehts bei: function HandleMessage(msg) { ...
+        });
+        // on button click:
+        // HandleMessage("video|state|");
+</script>
     {% for scriptFile in SCRIPT_FILES %}
         <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
     {% endfor %}
