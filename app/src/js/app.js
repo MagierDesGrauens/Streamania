@@ -5,6 +5,8 @@ vendor/bootstrap.js
 
 // Streamania Plugins
 plugins/icons-plugin.js
+plugins/cookie-plugin.js
+plugins/socket-plugin.js
 
 /*
 *     <!--

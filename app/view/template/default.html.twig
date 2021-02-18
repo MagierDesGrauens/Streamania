@@ -88,60 +88,187 @@
                 <input id="yt-link" type="text" placeholder="link rein da">
                 <input type="submit">
             </form>
-            <iframe width="420" height="315"
+            <!--<iframe width="420" height="315"
                     src="https://www.youtube.com/embed/tgbNymZ7vqY">
-            </iframe>
-            <iframe width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            </iframe>-->
 
-            </iframe>
+            <video id='video-container' controls> <!-- autoplay> -->
+                Your browser does not support HTML5 video.
+            </video>
+
+            <!--<iframe width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+            </iframe>-->
+
             <button id="create-room">
                 Erstelle raum!
             </button>
         </div>
     </footer>
+
+    {% for scriptFile in SCRIPT_FILES %}
+        <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
+    {% endfor %}
+
     <script>
-        var watch2gether_socket_url = "{{ WATCH2GETHER_SOCKET_URL }}";
-        var watch2gether_port = {{ WATCH2GETHER_PORT }};
-        let videoTimeStamp;
-        let videoTimeStartet;
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for(var i=0; i<ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1);
-                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        class VideoPlugin
+        {
+            constructor() {
+                // Verbindung zum Server
+                this.socket = null;
+
+                // Video-Container
+                this.video = null;
+                this.formEl = null;
+                this.ytLink = null;
+
+                // Status
+                this.state = 'stopped';
+
+                // Video-Src
+                this.src = '';
+
+                // Der aktuelle Zeitstempel wie weit das Video ist
+                this.timestamp = 0;
+
+                // Zeitstempel in Sekunden, wann das Video angefangen hat,
+                // um aktuellen Zeitstempel des Video berechnen zu können
+                this.startedAt = 0;
             }
-            return "";
+
+            init(host, port) {
+                console.log("Verbinde zum Server...");
+
+                this.video = document.querySelector('#video-container');
+                this.formEl = document.querySelector('#myform');
+                this.ytLink = document.querySelector('#yt-link');
+
+                this.socket = new SocketPlugin(host, port);
+                this.socket.onSocketOpen = this.onSocketOpen.bind(this);
+                this.socket.onSocketMessage = this.onSocketMessage.bind(this);
+                this.socket.init();
+
+                this.registerEvents();
+            }
+
+            registerEvents() {
+                //videoElementClick -> onClicked -> Toggle state playing zu stopped oder stopped zu playing + dem Server mitteilen
+                // oder gibt es direkt ein event was onPlaying / onStopped aufrufen könnte?
+                this.formEl.addEventListener('submit', this.onLinkChanged.bind(this));
+            }
+
+            onSocketOpen() {
+                this.socket.send('room|connect|1|' + CookiePlugin.get('PHPSESSID'));
+            }
+
+            onSocketMessage(event) {
+                this.handleMessage(event.data);
+            }
+
+            onLinkChanged(e) {
+                e.preventDefault();
+                //this.ytLink.value;
+
+                this.socket.send('video|src|' + this.ytLink.value);
+                document.querySelector('#video-container').src = this.ytLink.value;
+
+                this.state = 'stopped';
+                this.timestamp = 0;
+                this.startedAt = 0;
+
+                // Test Video:
+                // https://cdn.videvo.net/videvo_files/video/free/2014-02/small_watermarked/Microscope_5__Scientist__Videvo_preview.webm
+            }
+
+            onPlaying() {
+                this.state = 'playing';
+
+                // video|state|playing|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
+                socket.send('video|state|playing|5|' + Math.round(Date.now() / 1000));
+            }
+
+            onStopped() {
+                this.state = 'stopped';
+
+                // video|state|stopped|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
+                socket.send('video|state|stopped|3|' + Math.round(Date.now() / 1000));
+            }
+
+            handleMessage(message) {
+                let commands = message.split('|');
+                let command = commands[0];
+
+                console.log(commands);
+
+                if (command === '') {
+                    this.handleVideoMessage(commands);
+                }
+            }
+
+            handleVideoMessage(commands) {
+                if (commands[1] === 'src') {
+                    this.setVideoSrc(commands[2]);
+                } else if (commands[1] === 'state') {
+                    let state = commands[2];
+                    let videoTimestamp = parseInt(commands[3]);
+                    let currentTimestamp = parseInt(commands[4]);
+
+                    this.setState(state);
+
+                    if (state === 'playing') {
+
+                    } else {
+                        this.stop();
+                    }
+                    //this.setVideoTime();
+                }
+            }
+
+            play() {
+                // Video abpsielen
+            }
+
+            stop() {
+                // Video stoppen
+            }
+
+            setSrc(src) {
+                this.src = src;
+
+                console.log('Set source to', src);
+
+                // VideoElement.attribute("src", src) ??
+            }
+
+            setState(state) {
+                this.state = state;
+
+                console.log('Set video state to', state);
+
+                if (state === 'playing') {
+                    this.play();
+                } else {
+                    this.stop();
+                }
+            }
+
+            setTime(time) {
+                // time ist in sekunden --> sollte am besten hinterher als float gemacht werden, aber vorerst zum Test OK
+                // VideoElement.setCurrentTime(time) ?? 
+            }
         }
 
-        let socket = new WebSocket("ws://localhost:2021");
+        let video = new VideoPlugin();
+        video.init("{{ WATCH2GETHER_SOCKET_URL }}", {{ WATCH2GETHER_PORT }});
 
-        socket.onopen = function(e) {
-            console.log("[open] Connection established");
-            console.log("Sending to server");
-            socket.send("room|connect|1|" + getCookie('PHPSESSID'));
-        };
 
-        socket.onmessage = function(event) {
-            console.log(`[message] Data received from server: ${event.data}`);
-            HandleMessage(event.data);
-        };
 
-        socket.onclose = function(event) {
-            if (event.wasClean) {
-                console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-            } else {
-                // e.g. server process killed or network down
-                // event.code is usually 1006 in this case
-                console.log('[close] Connection died');
-            }
-        };
 
-        socket.onerror = function(error) {
-            console.log(`[error] ${error.message}`);
-        };
 
+
+
+
+        /*
         function HandleMessage(msg) {
             video|state|play / stop|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
             let stringMsg = msg.split["|"];
@@ -166,51 +293,28 @@
                 }
             }
         };
-
-        function playStop(playstate) {
-            socket.send('video|state|'+playstate+'|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED')
-            socket.send(`${playstate}|connect|1|` + getCookie('PHPSESSID'));
-        }
-
-        function changePlayStop(playstate) {
-            if (playstate === "play") {
-                //starte video
-            } else {
-                //pausiere video
-            }
-        }
-
+        
         function changelink(userlink) {
             socket.send('video|src|'+userlink);
             setTimeZero();
-        }
-
-        function setTimeZero() {
-            //zeit auf 0 setzen
-        }
-
-        function setVideoTime(stamp, started) {
-            videoTimeStamp = stamp;
-            videoTimeStartet = started;
-        }
-
-        function setVideoLink(link) {
-
-        }
-        console.log("setz video");
-        let ytlink = "";
+        }*/
+        /*let ytlink = "";
         let template = "https://www.youtube.com/embed/";
         document.getElementById("myform").addEventListener('submit', function (e) {
             e.preventDefault();
             ytlink = document.getElementById('yt-link').value;
 
-            console.log(ytlink);
-            console.log(e);
-            let tmp = ytlink.split("/");
 
-            socket.send('video|state|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED');
+            // Test Video:
+            // https://cdn.videvo.net/videvo_files/video/free/2014-02/small_watermarked/Microscope_5__Scientist__Videvo_preview.webm
+            //document.querySelector('#video-container').src = ytlink;
+            //console.log(ytlink);
+            //console.log(e);
+            //let tmp = ytlink.split("/");
 
-            let frame = document.querySelector('iframe');
+            //socket.send('video|state|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED');
+
+            /*let frame = document.querySelector('iframe');
             frame.setAttribute('src', (template + tmp[tmp.length-1]));
             frame.addEventListener('load', function (e) {
                 document.getElementsByClassName("ytp-large-play-button")[0].addEventListener('click', function (e) {
@@ -219,16 +323,14 @@
                         console.log("pause oder play?");
                     });
                 });
-            });
+            });*/
             // schicke link zum server
             // fetch...
             // weiter gehts bei: function HandleMessage(msg) { ...
-        });
+        //});
+
         // on button click:
         // HandleMessage("video|state|");
-</script>
-    {% for scriptFile in SCRIPT_FILES %}
-        <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
-    {% endfor %}
+    </script>
 </body>
 </html>
