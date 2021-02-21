@@ -11,14 +11,22 @@
 {% block content %}
     <div class="watchtogether">
         {% if roomId != -1 %}
-            <form id="myform">
-                <input id="yt-link" type="text" placeholder="link rein da">
-                <input type="submit">
-            </form>
-            <div id="watchtogehter__video-player" class="watchtogehter__video-player">
+            <div id="room-content" style="display: none">
+                <form id="myform">
+                    <input id="yt-link" type="text" placeholder="link rein da">
+                    <input type="submit">
+                </form>
+                <div id="watchtogehter__video-player" class="watchtogehter__video-player">
+                </div>
+                <button id="btnYTActionListener">startListener</button>
+                <button id="testplay">play</button>
+                <button id="stop">stop</button>
             </div>
-            <button id="btnYTActionListener">startListener</button>
-            <button id="testplay">play</button>
+            <div id="button-page" style="display: none">
+                <button>
+                    Raum Betreten
+                </button>
+            </div>
 
             <script>
                 // 2. This code loads the IFrame Player API code asynchronously.
@@ -27,8 +35,8 @@
                 var firstScriptTag = document.getElementsByTagName('script')[0];
                 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-                // 3. This function creates an <iframe> (and YouTube player)
-                //    after the API code downloads.
+                //  3. This function creates an <iframe> (and YouTube player)
+                //  after the API code downloads.
                 var player;
                 function onYouTubeIframeAPIReady() {
                     player = new YT.Player('watchtogehter__video-player', {
@@ -59,12 +67,15 @@
                 }
 
                 function stopVideo() {
-                    //player.stopVideo();
+                    player.stopVideo();
+                    video.onStopped(Math.round(player.playerInfo.currentTime));
+                    console.log("STOP");
                 }
 
                 function startVideo() {
                     player.playVideo();
-                    console.log("OLAY");
+                    video.onPlaying(Math.round(player.playerInfo.currentTime));
+                    console.log("PLAY");
                 }
 
                 var playVideoVar = false;
@@ -99,12 +110,17 @@
                     playVideoVar = true;
                 }
 
+                function clickStopButton() {
+                    playVideoVar = false;
+                }
+
                 function loadOtherSource(event) {
                     event.preventDefault();
                     newVideoSrc = 'bHQqvYy5KYo';
                 }
 
                 document.querySelector('#testplay').addEventListener('click', clickPlayButton);
+                document.querySelector('#stop').addEventListener('click', clickStopButton);
                 document.querySelector('#testplay').addEventListener('click', loadOtherSource);
                 document.querySelector('#myform').addEventListener('submit', loadOtherSource);
             </script>
@@ -158,6 +174,7 @@
 
                     onSocketOpen() {
                         this.socket.send('room|connect|1|' + CookiePlugin.get('PHPSESSID'));
+                        console.log("test");
                     }
 
                     onSocketMessage(event) {
@@ -179,18 +196,19 @@
                         // https://cdn.videvo.net/videvo_files/video/free/2014-02/small_watermarked/Microscope_5__Scientist__Videvo_preview.webm
                     }
 
-                    onPlaying() {
+                    onPlaying(videoTime) {
                         this.state = 'playing';
 
                         // video|state|playing|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
-                        socket.send('video|state|playing|5|' + Math.round(Date.now() / 1000));
+                        //socket.send('video|state|playing|5|' + Math.round(Date.now() / 1000));
+                        this.socket.send(`video|state|playing|${videoTime}|` + Math.round(Date.now() / 1000));
                     }
 
-                    onStopped() {
+                    onStopped(videoTime) {
                         this.state = 'stopped';
 
                         // video|state|stopped|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
-                        socket.send('video|state|stopped|3|' + Math.round(Date.now() / 1000));
+                        this.socket.send(`video|state|stopped|${videoTime}|` + Math.round(Date.now() / 1000));
                     }
 
                     handleMessage(message) {
@@ -199,10 +217,22 @@
 
                         console.log(commands);
 
+                        if (command === 'connected') {
+                            this.handleConnectedMessage();
+                        }
+
                         if (command === '') {
                             this.handleVideoMessage(commands);
                         }
                     }
+
+                    handleConnectedMessage() {
+                        document.getElementById('button-page').style.display = "block";
+                        document.getElementById('button-page').addEventListener('click', function (e) {
+                            document.getElementById('button-page').style.display = "none";
+                            document.getElementById('room-content').style.display = "block";
+                        });
+                    };
 
                     handleVideoMessage(commands) {
                         if (commands[1] === 'src') {
@@ -258,7 +288,9 @@
                 }
 
                 let video = new VideoPlugin();
-                //video.init("{{ WATCH2GETHER_SOCKET_URL }}", {{ WATCH2GETHER_PORT }});
+                video.init("{{ WATCH2GETHER_SOCKET_URL }}", {{ WATCH2GETHER_PORT }});
+
+                //video.handleMessage();
 
 
 

@@ -69,6 +69,10 @@
                 </div>
             {% endif %}
 
+            {% for scriptFile in SCRIPT_FILES %}
+                <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
+            {% endfor %}
+
             {% block content %}
                 Default Content
             {% endblock %}
@@ -107,9 +111,5 @@
         </div>
         #}
     </footer>
-
-    {% for scriptFile in SCRIPT_FILES %}
-        <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
-    {% endfor %}
 </body>
 </html>
