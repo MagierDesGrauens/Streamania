@@ -18,7 +18,6 @@
                 </form>
                 <div id="watchtogehter__video-player" class="watchtogehter__video-player">
                 </div>
-                <button id="btnYTActionListener">startListener</button>
                 <button id="testplay">play</button>
                 <button id="stop">stop</button>
             </div>
@@ -99,7 +98,7 @@
                 
                 // Player.playVideo Muss zwanghaft durch eine User-Action durchgeführt werden
                 // Geht auch mit dem Workaround, dass eine einmalige User-Action permanent einen Interval laufen lässt :P
-                document.querySelector('#btnYTActionListener').addEventListener(
+                document.querySelector('#button-page').addEventListener(
                     'click',
                     function() {
                         setInterval(ytActionListener, 100)
@@ -116,12 +115,14 @@
 
                 function loadOtherSource(event) {
                     event.preventDefault();
-                    newVideoSrc = 'bHQqvYy5KYo';
+                    //test Link: "https://youtu.be/G1IbRujko-A"
+                    let tmpLink = document.getElementById("yt-link").value.split("/");
+                    newVideoSrc = tmpLink[tmpLink.length-1];
+                    //newVideoSrc = 'bHQqvYy5KYo';
                 }
 
                 document.querySelector('#testplay').addEventListener('click', clickPlayButton);
-                document.querySelector('#stop').addEventListener('click', clickStopButton);
-                document.querySelector('#testplay').addEventListener('click', loadOtherSource);
+                document.querySelector('#stop').addEventListener('click', stopVideo);
                 document.querySelector('#myform').addEventListener('submit', loadOtherSource);
             </script>
 
@@ -187,6 +188,7 @@
 
                         this.socket.send('video|src|' + this.ytLink.value);
                         document.querySelector('#video-container').src = this.ytLink.value;
+                        //document.querySelector('#watchtogehter__video-player').src = this.ytLink.value;
 
                         this.state = 'stopped';
                         this.timestamp = 0;
@@ -215,7 +217,7 @@
                         let commands = message.split('|');
                         let command = commands[0];
 
-                        console.log(commands);
+                        console.log(command);
 
                         if (command === 'connected') {
                             this.handleConnectedMessage();
@@ -289,79 +291,6 @@
 
                 let video = new VideoPlugin();
                 video.init("{{ WATCH2GETHER_SOCKET_URL }}", {{ WATCH2GETHER_PORT }});
-
-                //video.handleMessage();
-
-
-
-
-
-
-
-
-                /*
-                function HandleMessage(msg) {
-                    video|state|play / stop|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
-                    let stringMsg = msg.split["|"];
-                    if (stringMsg[0] === "video") {
-                        if (stringMsg[1] === "state") {
-                            if (stringMsg[2] === "play") {
-                                changePlayStop("play");
-                            } else {
-                                changePlayStop("stop");
-                            }
-                            setVideoTime(stringMsg[3], stringMsg[4]);
-                        } else if (stringMsg[1] === "src") {
-                            setVideoLink(stringMsg[2]);
-                        }
-                    } else if (stringMsg[0] === "users") {
-                        if (stringMsg[1] === "add") {
-
-                        } else if (stringMsg[1] === "remove") {
-
-                        } else {
-
-                        }
-                    }
-                };
-                
-                function changelink(userlink) {
-                    socket.send('video|src|'+userlink);
-                    setTimeZero();
-                }*/
-                /*let ytlink = "";
-                let template = "https://www.youtube.com/embed/";
-                document.getElementById("myform").addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    ytlink = document.getElementById('yt-link').value;
-
-
-                    // Test Video:
-                    // https://cdn.videvo.net/videvo_files/video/free/2014-02/small_watermarked/Microscope_5__Scientist__Videvo_preview.webm
-                    //document.querySelector('#video-container').src = ytlink;
-                    //console.log(ytlink);
-                    //console.log(e);
-                    //let tmp = ytlink.split("/");
-
-                    //socket.send('video|state|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED');
-
-                    /*let frame = document.querySelector('iframe');
-                    frame.setAttribute('src', (template + tmp[tmp.length-1]));
-                    frame.addEventListener('load', function (e) {
-                        document.getElementsByClassName("ytp-large-play-button")[0].addEventListener('click', function (e) {
-                            console.log("start");
-                            document.getElementsByClassName("ytp-play-button")[0].addEventListener('click', function (e) {
-                                console.log("pause oder play?");
-                            });
-                        });
-                    });*/
-                    // schicke link zum server
-                    // fetch...
-                    // weiter gehts bei: function HandleMessage(msg) { ...
-                //});
-
-                // on button click:
-                // HandleMessage("video|state|");
             </script>
         {% else %}
             Dieser Raum existiert nicht.
