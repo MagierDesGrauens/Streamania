@@ -69,6 +69,10 @@
                 </div>
             {% endif %}
 
+            {% for scriptFile in SCRIPT_FILES %}
+                <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
+            {% endfor %}
+
             {% block content %}
                 Default Content
             {% endblock %}
@@ -83,14 +87,29 @@
 
             &copy; {{ year }} by Tobias Vedder, Jerome Lemoine, Mirco Rohleff - ITM1 - IT119
         </div>
-    </footer>
+        {#
+        <div>
+            <!--<form id="myform">
+                <input id="yt-link" type="text" placeholder="link rein da">
+                <input type="submit">
+            </form>-->
+            <!--<iframe width="420" height="315"
+                    src="https://www.youtube.com/embed/tgbNymZ7vqY">
+            </iframe>-->
 
-    <script>
-        var watch2gether_socket_url = "{{ WATCH2GETHER_SOCKET_URL }}";
-        var watch2gether_port = {{ WATCH2GETHER_PORT }};
-    </script>
-    {% for scriptFile in SCRIPT_FILES %}
-        <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
-    {% endfor %}
+            <video id='video-container' controls> <!-- autoplay> -->
+                Your browser does not support HTML5 video.
+            </video>
+
+            <!--<iframe width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+            </iframe>-->
+
+            <button id="create-room">
+                Erstelle raum!
+            </button>
+        </div>
+        #}
+    </footer>
 </body>
 </html>
