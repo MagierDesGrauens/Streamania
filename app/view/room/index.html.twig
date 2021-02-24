@@ -11,287 +11,33 @@
 {% block content %}
     <div class="watchtogether">
         {% if roomId != -1 %}
-            <div id="room-content" style="display: none">
-                <form id="myform">
-                    <input id="yt-link" type="text" placeholder="link rein da">
-                    <input type="submit">
-                </form>
-                <div id="watchtogehter__video-player" class="watchtogehter__video-player">
+            <div class="room">
+                <div class="room__message alert alert-secondary"></div>
+
+                <div class="room__content">
+                    <div class="room__video-content">
+                        <form class="room__link-form">
+                            <label for="room__link">
+                                YouTube Link
+                            </label>
+                            <input class="room__link form-control" id="room__link" type="text" placeholder="YouTube Link" value="https://www.youtube.com/watch?v=TJLKkz7eVjg">
+                            <input class="btn btn-success" type="submit" value="Video laden">
+                        </form>
+
+                        <div id="watchtogehter__video-player" class="watchtogehter__video-player"></div>
+                    </div>
+
+                    <div class="room__user-list">
+                        <div class="room__list-title">
+                            Nutzer im Raum:
+                        </div>
+                    </div>
                 </div>
-                <button id="testplay">play</button>
-                <button id="stop">stop</button>
-            </div>
-            <div id="button-page" style="display: none">
-                <button>
-                    Raum Betreten
-                </button>
-            </div>
-
-            <script>
-                // 2. This code loads the IFrame Player API code asynchronously.
-                var tag = document.createElement('script');
-                tag.src = "https://www.youtube.com/player_api";
-                var firstScriptTag = document.getElementsByTagName('script')[0];
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-                //  3. This function creates an <iframe> (and YouTube player)
-                //  after the API code downloads.
-                var player;
-                function onYouTubeIframeAPIReady() {
-                    player = new YT.Player('watchtogehter__video-player', {
-                        height: '360',
-                        width: '640',
-                        videoId: 'M7lc1UVf-VE',
-                        events: {
-                            'onReady': onPlayerReady,
-                            'onStateChange': onPlayerStateChange
-                        }
-                    });
-                }
-
-                // 4. The API will call this function when the video player is ready.
-                function onPlayerReady(event) {
-                    console.log("Play");
-                }
-
-                // 5. The API calls this function when the player's state changes.
-                //    The function indicates that when playing a video (state=1),
-                //    the player should play for six seconds and then stop.
-                var done = false;
-                function onPlayerStateChange(event) {
-                    if (event.data == YT.PlayerState.PLAYING && !done) {
-                        setTimeout(stopVideo, 6000);
-                        done = true;
-                    }
-                }
-
-                function stopVideo() {
-                    player.stopVideo();
-                    video.onStopped(Math.round(player.playerInfo.currentTime));
-                    console.log("STOP");
-                }
-
-                function startVideo() {
-                    player.playVideo();
-                    video.onPlaying(Math.round(player.playerInfo.currentTime));
-                    console.log("PLAY");
-                }
-
-                var playVideoVar = false;
-                var newVideoSrc = '';
-
-                function ytActionListener() {
-                    if (playVideoVar) {
-                        playVideoVar = false;
-                        startVideo();
-                    }
-
-                    if (newVideoSrc) {
-                        player.loadVideoById({
-                            'videoId': newVideoSrc,
-                            'startSeconds': 0
-                        });
-
-                        newVideoSrc = '';
-                    }
-                }
                 
-                // Player.playVideo Muss zwanghaft durch eine User-Action durchgeführt werden
-                // Geht auch mit dem Workaround, dass eine einmalige User-Action permanent einen Interval laufen lässt :P
-                document.querySelector('#button-page').addEventListener(
-                    'click',
-                    function() {
-                        setInterval(ytActionListener, 100)
-                    }
-                );
-                
-                function clickPlayButton() {
-                    playVideoVar = true;
-                }
-
-                function clickStopButton() {
-                    playVideoVar = false;
-                }
-
-                function loadOtherSource(event) {
-                    event.preventDefault();
-                    //test Link: "https://youtu.be/G1IbRujko-A"
-                    let tmpLink = document.getElementById("yt-link").value.split("/");
-                    newVideoSrc = tmpLink[tmpLink.length-1];
-                    //newVideoSrc = 'bHQqvYy5KYo';
-                }
-
-                document.querySelector('#testplay').addEventListener('click', clickPlayButton);
-                document.querySelector('#stop').addEventListener('click', stopVideo);
-                document.querySelector('#myform').addEventListener('submit', loadOtherSource);
-            </script>
-
-            <script>
-                class VideoPlugin
-                {
-                    constructor() {
-                        // Verbindung zum Server
-                        this.socket = null;
-
-                        // Video-Container
-                        this.player = null;
-                        this.formEl = null;
-                        this.ytLink = null;
-
-                        // Status
-                        this.state = 'stopped';
-
-                        // Video-Src
-                        this.src = '';
-
-                        // Der aktuelle Zeitstempel wie weit das Video ist
-                        this.timestamp = 0;
-
-                        // Zeitstempel in Sekunden, wann das Video angefangen hat,
-                        // um aktuellen Zeitstempel des Video berechnen zu können
-                        this.startedAt = 0;
-                    }
-
-                    init(host, port) {
-                        console.log("Verbinde zum Server...");
-
-                        this.video = document.querySelector('#video-container');
-                        this.formEl = document.querySelector('#myform');
-                        this.ytLink = document.querySelector('#yt-link');
-
-                        this.socket = new SocketPlugin(host, port);
-                        this.socket.onSocketOpen = this.onSocketOpen.bind(this);
-                        this.socket.onSocketMessage = this.onSocketMessage.bind(this);
-                        this.socket.init();
-
-                        this.registerEvents();
-                    }
-
-                    registerEvents() {
-                        //videoElementClick -> onClicked -> Toggle state playing zu stopped oder stopped zu playing + dem Server mitteilen
-                        // oder gibt es direkt ein event was onPlaying / onStopped aufrufen könnte?
-                        this.formEl.addEventListener('submit', this.onLinkChanged.bind(this));
-                    }
-
-                    onSocketOpen() {
-                        this.socket.send('room|connect|1|' + CookiePlugin.get('PHPSESSID'));
-                        console.log("test");
-                    }
-
-                    onSocketMessage(event) {
-                        this.handleMessage(event.data);
-                    }
-
-                    onLinkChanged(e) {
-                        e.preventDefault();
-                        //this.ytLink.value;
-
-                        this.socket.send('video|src|' + this.ytLink.value);
-                        document.querySelector('#video-container').src = this.ytLink.value;
-                        //document.querySelector('#watchtogehter__video-player').src = this.ytLink.value;
-
-                        this.state = 'stopped';
-                        this.timestamp = 0;
-                        this.startedAt = 0;
-
-                        // Test Video:
-                        // https://cdn.videvo.net/videvo_files/video/free/2014-02/small_watermarked/Microscope_5__Scientist__Videvo_preview.webm
-                    }
-
-                    onPlaying(videoTime) {
-                        this.state = 'playing';
-
-                        // video|state|playing|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
-                        //socket.send('video|state|playing|5|' + Math.round(Date.now() / 1000));
-                        this.socket.send(`video|state|playing|${videoTime}|` + Math.round(Date.now() / 1000));
-                    }
-
-                    onStopped(videoTime) {
-                        this.state = 'stopped';
-
-                        // video|state|stopped|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
-                        this.socket.send(`video|state|stopped|${videoTime}|` + Math.round(Date.now() / 1000));
-                    }
-
-                    handleMessage(message) {
-                        let commands = message.split('|');
-                        let command = commands[0];
-
-                        console.log(command);
-
-                        if (command === 'connected') {
-                            this.handleConnectedMessage();
-                        }
-
-                        if (command === '') {
-                            this.handleVideoMessage(commands);
-                        }
-                    }
-
-                    handleConnectedMessage() {
-                        document.getElementById('button-page').style.display = "block";
-                        document.getElementById('button-page').addEventListener('click', function (e) {
-                            document.getElementById('button-page').style.display = "none";
-                            document.getElementById('room-content').style.display = "block";
-                        });
-                    };
-
-                    handleVideoMessage(commands) {
-                        if (commands[1] === 'src') {
-                            this.setVideoSrc(commands[2]);
-                        } else if (commands[1] === 'state') {
-                            let state = commands[2];
-                            let videoTimestamp = parseInt(commands[3]);
-                            let currentTimestamp = parseInt(commands[4]);
-
-                            this.setState(state);
-
-                            if (state === 'playing') {
-
-                            } else {
-                                this.stop();
-                            }
-                            //this.setVideoTime();
-                        }
-                    }
-
-                    play() {
-                        // Video abpsielen
-                    }
-
-                    stop() {
-                        // Video stoppen
-                    }
-
-                    setSrc(src) {
-                        this.src = src;
-
-                        console.log('Set source to', src);
-
-                        // VideoElement.attribute("src", src) ??
-                    }
-
-                    setState(state) {
-                        this.state = state;
-
-                        console.log('Set video state to', state);
-
-                        if (state === 'playing') {
-                            this.play();
-                        } else {
-                            this.stop();
-                        }
-                    }
-
-                    setTime(time) {
-                        // time ist in sekunden --> sollte am besten hinterher als float gemacht werden, aber vorerst zum Test OK
-                        // VideoElement.setCurrentTime(time) ?? 
-                    }
-                }
-
-                let video = new VideoPlugin();
-                video.init("{{ WATCH2GETHER_SOCKET_URL }}", {{ WATCH2GETHER_PORT }});
-            </script>
+                <div class="room__join">
+                    <button class="btn btn-success room__join-button">Raum betreten</button>
+                </div>
+            </div>
         {% else %}
             Dieser Raum existiert nicht.
         {% endif %}

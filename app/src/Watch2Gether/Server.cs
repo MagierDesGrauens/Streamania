@@ -143,7 +143,7 @@ namespace Watch2Gether
                     // Anderen im Raum mitteilen, das ein Nutzer gejoined ist
                     connections.ForEach(con =>
                     {
-                        if (con.UserId != userid && con.RoomId == roomid)
+                        if (con.RoomId == roomid)
                         {
                             con.WebSocket.Send("users|add|" + userid + "|" + username);
 
@@ -181,19 +181,22 @@ namespace Watch2Gether
 
             if (commands[1] == "state")
             {
-                Helper.Log(DateTimeOffset.Now.ToUnixTimeSeconds().ToString());
                 string state = commands[2];
+
                 Sql.query(
                     "UPDATE rooms SET " +
                         "video_state='" + commands[2] + "', " +
                         "video_timestamp='" + commands[3] + "', " +
-                        "video_started_at='" + DateTimeOffset.Now.ToUnixTimeSeconds() + "' " +
+                        "video_started_at='" + commands[4] + "' " +
                     "WHERE rooms_id='" + con.RoomId + "'"
                 );
 
                 connections.ForEach(conn =>
                 {
-                    conn.WebSocket.Send(GetVideoState(con.RoomId));
+                    if (conn.UserId != con.UserId)
+                    {
+                        conn.WebSocket.Send(GetVideoState(con.RoomId));
+                    }
                 });
             }
         }
@@ -203,7 +206,7 @@ namespace Watch2Gether
             // video|state|play / stop|TIMESTAMP_OF_VIDEO_SECONDS|TIMESTAMP_OF_VIDEO_STARTED
             QueryResult qr = Sql.squery("SELECT video_state, video_timestamp, video_started_at FROM rooms WHERE rooms_id='" + roomId + "'");
 
-            return "video|state|" + qr.get("video_state") + "|" + qr.get("video_timestamp") + "|" + qr.get("video_started_at");
+            return "video|state|" + qr.get("video_state") + "|" + qr.get("video_timestamp").Replace(',', '.') + "|" + qr.get("video_started_at");
         }
 
         private string GetVideoSrc(string roomId)

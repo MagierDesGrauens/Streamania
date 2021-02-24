@@ -1,0 +1,56 @@
+.room__content {
+    display: none;
+
+    &--visible {
+        display: flex;
+    }
+}
+
+.room__message {
+    &--hidden {
+        display: none;
+    }
+}
+
+.room__join {
+    display: none;
+
+    &--visible {
+        display: block;
+    }
+}
+
+.room__link-form {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: center;
+    gap: 20px;
+
+    label {
+        margin: 0;
+    }
+}
+
+.room__link {
+    max-width: 395px;
+}
+
+.room__user-list {
+    width: 100%;
+    margin-left: 40px;
+}
+
+.room__list-title {
+    font-size: 20px;
+    padding-bottom: 20px;
+}
+
+.room__user {
+    padding: 25px 15px;
+    background-color: $color-gray-100;
+    border-top: 2px solid $color-gray-300;
+
+    &:last-child {
+        border-bottom: 2px solid $color-gray-300;
+    }
+}
