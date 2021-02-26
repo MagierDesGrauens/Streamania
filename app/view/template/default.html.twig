@@ -9,9 +9,10 @@
         {% endfor %}
     </head>
     <main>
-        <nav class="navigation navbar navbar-expand-lg">
+        <nav class="navigation navbar navbar-expand">
             <div class="container">
-                <a class="navbar-brand" href="{{ WEB_BASE }}">STREAMANIA</a>
+                <a class="navbar-brand" href="{{ WEB_BASE }}"><i class="bi bi-tv"></i> STREAMANIA</a>
+
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -23,33 +24,42 @@
                 >
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ WEB_BASE }}?site=series">
-                                Serien
+                                <i class="bi bi-grid-3x3-gap"></i> Serien
                             </a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ WEB_BASE }}?site=movies">
-                                Filme
+                                <i class="bi bi-film"></i> Filme
                             </a>
                         </li>
+
                         {% if LOGGED_IN %}
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ WEB_BASE }}?site=room">
+                                    <i class="bi bi-people-fill"></i> Watch2Gether
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=logout">
-                                    Logout
+                                    <i class="bi bi-arrow-right-square"></i> Logout
                                 </a>
                             </li>
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=register">
-                                    Registrieren
+                                    <i class="bi bi-person-plus"></i>Registrieren
                                 </a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=login">
-                                    Login
+                                    <i class="bi bi-arrow-left-square"></i> Login
                                 </a>
                             </li>
                         {% endif %}
@@ -69,10 +79,6 @@
                 </div>
             {% endif %}
 
-            {% for scriptFile in SCRIPT_FILES %}
-                <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
-            {% endfor %}
-
             {% block content %}
                 Default Content
             {% endblock %}
@@ -87,29 +93,31 @@
 
             &copy; {{ year }} by Tobias Vedder, Jerome Lemoine, Mirco Rohleff - ITM1 - IT119
         </div>
-        {#
-        <div>
-            <!--<form id="myform">
-                <input id="yt-link" type="text" placeholder="link rein da">
-                <input type="submit">
-            </form>-->
-            <!--<iframe width="420" height="315"
-                    src="https://www.youtube.com/embed/tgbNymZ7vqY">
-            </iframe>-->
-
-            <video id='video-container' controls> <!-- autoplay> -->
-                Your browser does not support HTML5 video.
-            </video>
-
-            <!--<iframe width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-
-            </iframe>-->
-
-            <button id="create-room">
-                Erstelle raum!
-            </button>
-        </div>
-        #}
     </footer>
+
+    {% for scriptFile in SCRIPT_FILES %}
+        <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
+    {% endfor %}
+
+    {% if roomId >= 0 %}
+        <script>
+            // Own Video Plugin
+            let video = new VideoPlugin();
+
+            if (document.querySelector('[data-room]') !== null) {
+                video.init('{{ WATCH2GETHER_SOCKET_URL }}', {{ WATCH2GETHER_PORT }}, {{ roomId }}, '{{ roomVideoSrc }}');
+
+                // YouTube Player
+                var tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/player_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+
+            function onYouTubeIframeAPIReady() {
+                video.initPlayer();
+            }
+        </script>
+    {% endif %}
 </body>
 </html>

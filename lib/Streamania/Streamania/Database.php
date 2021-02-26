@@ -66,6 +66,11 @@ class Database
         }
 
         self::$stm->execute();
+
+        if (strpos(strtoupper($sql), 'INSERT') === 0) {
+            return [['lastInsertId' => self::$pdo->lastInsertId()]];
+        }
+
         $result = self::$stm->fetchAll(PDO::FETCH_ASSOC);
 
         return $result === false ? [] : $result;

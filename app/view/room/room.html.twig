@@ -1,0 +1,41 @@
+{% extends 'template/default.html.twig' %}
+
+{% block site_title %}
+    Raum
+{% endblock %}
+
+{% block content_title %}
+    Raum
+{% endblock %}
+
+{% block content %}
+    <div class="watchtogether">
+        <div class="room" data-room>
+            <div class="room__message alert alert-secondary"></div>
+
+            <div class="room__content">
+                <div class="room__video-content">
+                    <form class="room__link-form">
+                        <label for="room__link">
+                            YouTube Link
+                        </label>
+                        <input class="room__link form-control" id="room__link" type="text" placeholder="z. B. https://www.youtube.com/watch?v=TJLKkz7eVjg" value="">
+                        <input class="btn btn-success" type="submit" value="Video laden">
+                    </form>
+
+                    <div id="watchtogehter__video-player" class="watchtogehter__video-player"></div>
+                </div>
+
+                <div class="room__user-list">
+                    <div class="room__list-title">
+                        Nutzer im Raum:
+                    </div>
+                </div>
+            </div>
+            
+            <div class="room__join">
+                <button class="btn btn-success room__join-button">Raum betreten</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
