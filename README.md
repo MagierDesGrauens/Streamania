@@ -19,7 +19,8 @@ AWE Projekt - Video Plattform by TV und JL
 - `git clone https://github.com/scssphp/scssphp.git lib/Sass`
 - `mv lib/Twig/src lib/Twig/Twig`
 - Change in `./bin/console.bat` the path of `C:\xampp\` to the location of your xampp
-- Excecute the install command
+- Excecute the install command: `bin/console.bat install`
+- Adjust your `bin/config.ini` file
 
 ## Console Commands
 - Install: `bin/console.bat install <action>`

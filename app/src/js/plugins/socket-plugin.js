@@ -29,7 +29,7 @@ class SocketPlugin
     }
 
     onSocketError(error) {
-        console.error('Scoket-Error:', error);
+        console.error('Socket-Error:', error);
     }
 
     send(message) {

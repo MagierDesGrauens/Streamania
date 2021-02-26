@@ -88,8 +88,8 @@
     <footer class="footer">
         <div class="container">
             {% set currYear = 'now' | date('Y') %}
-            {% set createYear = '2021' %}
-            {% set year = (createYear != currYear) ? '2021 - ' ~ currYear : createYear %}
+            {% set createYear = '2020' %}
+            {% set year = (createYear != currYear) ? createYear ~ ' - ' ~ currYear : createYear %}
 
             &copy; {{ year }} by Tobias Vedder, Jerome Lemoine, Mirco Rohleff - ITM1 - IT119
         </div>

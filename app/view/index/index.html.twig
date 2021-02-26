@@ -9,7 +9,11 @@
 {% endblock %}
 
 {% block content %}
-    Willkommen bei Streamania <i class="bi bi-tv"></i> - dem Portal für Serien und Filme.<br>
+    {% if LOGGED_IN %}
+        Hallo <b>{{ username }}</b>!<br><br>
+    {% endif %}
+
+    Willkommen bei <i class="bi bi-tv"></i> Streamania - dem Portal für Serien und Filme.<br>
     <br>
     Brand-Heißer Shit: Schaut jetzt gemeinsam Videos!
 {% endblock %}

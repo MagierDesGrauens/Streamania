@@ -16,7 +16,7 @@ class IndexModel extends Model
         return [
             'index/index.html.twig',
             [
-                'name' => $this->username
+                'username' => $this->username
             ]
         ];
     }
