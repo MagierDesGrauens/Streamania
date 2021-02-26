@@ -62,6 +62,7 @@ class Installer
      public function installConfig(): void
      {
         $file = __DIR__ . '/../../../bin/config.ini';
+        $output = '';
         $ini = [];
         $iniSampleData = [
             'Database' => [
@@ -78,7 +79,6 @@ class Installer
                 'port' => '2021'
             ]
         ];
-        $output = '';
 
         if (!file_exists($file)) {
             file_put_contents($file, '');
@@ -113,14 +113,14 @@ class Installer
         }
 
         file_put_contents($file, $output);
-     }
+    }
 
     public function installDatabase(): void
     {
         Database::connect();
 
         if (!Database::tableExists('users')) {
-            $sql = file_get_contents(__DIR__ . '/resources/sql/streamania2.sql');
+            $sql = file_get_contents(__DIR__ . '/resources/sql/streamania.sql');
             Database::fetch($sql);
 
             $this->installed = true;
