@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 05. Feb 2021 um 14:19
+-- Erstellungszeit: 26. Feb 2021 um 09:22
 -- Server-Version: 10.4.14-MariaDB
 -- PHP-Version: 7.4.9
 
@@ -27,11 +27,13 @@ SET time_zone = "+00:00";
 -- Tabellenstruktur für Tabelle `rooms`
 --
 
+DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE `rooms` (
   `rooms_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `video_src` varchar(255) DEFAULT NULL,
-  `video_timestamp` int(11) DEFAULT NULL,
-  `video_started_at` int(11) DEFAULT NULL,
+  `video_timestamp` float DEFAULT NULL,
+  `video_started_at` bigint(20) DEFAULT NULL,
   `video_state` set('playing','stopped') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -41,9 +43,10 @@ CREATE TABLE `rooms` (
 -- Tabellenstruktur für Tabelle `rooms_users`
 --
 
+DROP TABLE IF EXISTS `rooms_users`;
 CREATE TABLE `rooms_users` (
   `rooms_users_id` int(11) NOT NULL,
-  `room_id` int(11) NOT NULL,
+  `rooms_id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -53,9 +56,10 @@ CREATE TABLE `rooms_users` (
 -- Tabellenstruktur für Tabelle `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `users_id` int(8) NOT NULL,
-  `session_id` varchar(64) DEFAULT NULL,
+  `session_id` varchar(255) NOT NULL,
   `mail` varchar(64) NOT NULL,
   `password` varchar(64) NOT NULL COMMENT 'SHA256',
   `username` varchar(32) NOT NULL
@@ -67,6 +71,7 @@ CREATE TABLE `users` (
 -- Tabellenstruktur für Tabelle `videos`
 --
 
+DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
   `videos_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -90,8 +95,8 @@ ALTER TABLE `rooms`
 --
 ALTER TABLE `rooms_users`
   ADD PRIMARY KEY (`rooms_users_id`),
-  ADD KEY `room_id` (`room_id`),
-  ADD KEY `users_id` (`users_id`);
+  ADD KEY `users_id` (`users_id`),
+  ADD KEY `rooms_id` (`rooms_id`) USING BTREE;
 
 --
 -- Indizes für die Tabelle `users`
@@ -142,8 +147,8 @@ ALTER TABLE `videos`
 -- Constraints der Tabelle `rooms_users`
 --
 ALTER TABLE `rooms_users`
-  ADD CONSTRAINT `rooms_users_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`rooms_id`),
-  ADD CONSTRAINT `rooms_users_ibfk_2` FOREIGN KEY (`users_id`) REFERENCES `users` (`users_id`);
+  ADD CONSTRAINT `rooms_users_ibfk_1` FOREIGN KEY (`rooms_id`) REFERENCES `rooms` (`rooms_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `rooms_users_ibfk_2` FOREIGN KEY (`users_id`) REFERENCES `users` (`users_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

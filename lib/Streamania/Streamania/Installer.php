@@ -15,29 +15,46 @@ class Installer
     private $installed;
 
     /**
+     * @var bool
+     */
+    private $reset;
+
+    /**
      * Konstruktor
      */
     public function __construct()
     {
         $this->installed = false;
+        $this->reset = false;
     }
 
     /**
      * @param string $arg
      */
-    public function install(string $arg)
+    public function install(string $arg, string $subArg)
     {
         $methods = get_class_methods($this);
 
-        // Alle install-Funktionen ausführen
-        foreach ($methods as $method) {
-            if (substr($method, 0, 7) === 'install' && $method !== 'install') {
-                $this->{$method}();
-            }
+        $this->reset = ($arg === '--reset' || $subArg === '--reset');
+
+        if ($arg === '--reset') {
+            $arg = '';
         }
 
-        if (!$this->installed) {
-            printf('Nothing new installed, already up to date.');
+        if ($arg === '' || $arg === '--reset') {
+            // Alle install-Funktionen ausführen
+            foreach ($methods as $method) {
+                if (substr($method, 0, 7) === 'install' && $method !== 'install') {
+                    $this->{$method}();
+                }
+            }
+
+            if (!$this->installed) {
+                printf('Nothing new installed, already up to date.');
+            }
+        } else {
+            $method = 'install' . ucfirst($arg);
+            $this->{$method}();
         }
     }
 
@@ -57,11 +74,25 @@ class Installer
      * ==========================
      * Install / Reset Funktionen
      * ==========================
+     *
+     * Attention: Order of functions is the order of installation!
      */
+
+    public function installDatabase(): void
+    {
+        Database::connect();
+
+        if (!Database::tableExists('users') || $this->reset) {
+            Database::fetch(file_get_contents(__DIR__ . '/resources/sql/streamania.sql'));
+
+            $this->installed = true;
+        }
+    }
 
      public function installConfig(): void
      {
         $file = __DIR__ . '/../../../bin/config.ini';
+        $output = '';
         $ini = [];
         $iniSampleData = [
             'Database' => [
@@ -78,13 +109,16 @@ class Installer
                 'port' => '2021'
             ]
         ];
-        $output = '';
 
         if (!file_exists($file)) {
             file_put_contents($file, '');
         }
 
         $ini = parse_ini_file($file, true);
+
+        if ($this->reset) {
+            $ini = [];
+        }
 
         // Keys prüfen
         foreach ($iniSampleData as $group => $data) {
@@ -113,18 +147,6 @@ class Installer
         }
 
         file_put_contents($file, $output);
-     }
-
-    public function installDatabase(): void
-    {
-        Database::connect();
-
-        if (!Database::tableExists('users')) {
-            $sql = file_get_contents(__DIR__ . '/resources/sql/streamania2.sql');
-            Database::fetch($sql);
-
-            $this->installed = true;
-        }
     }
 
     public function installDemodata(): void
@@ -132,8 +154,11 @@ class Installer
         Database::connect();
 
         if (Database::tableExists('videos')) {
-            $sql = file_get_contents(__DIR__ . '/resources/sql/demodata.sql');
-            Database::fetch($sql);
+            if ($this->reset) {
+                Database::fetch(file_get_contents(__DIR__ . '/resources/sql/clear-demodata.sql'));
+            }
+
+            Database::fetch(file_get_contents(__DIR__ . '/resources/sql/demodata.sql'));
 
             $this->installed = true;
         } else {
