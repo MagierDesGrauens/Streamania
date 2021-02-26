@@ -41,19 +41,24 @@ class Installer
             $arg = '';
         }
 
+        $this->log('Install with reset.');
+
         if ($arg === '' || $arg === '--reset') {
             // Alle install-Funktionen ausführen
             foreach ($methods as $method) {
                 if (substr($method, 0, 7) === 'install' && $method !== 'install') {
+                    $this->log('Execute ' . $method);
                     $this->{$method}();
                 }
             }
 
             if (!$this->installed) {
-                printf('Nothing new installed, already up to date.');
+                $this->log('Nothing new installed, already up to date.');
             }
         } else {
             $method = 'install' . ucfirst($arg);
+
+            $this->log('Execute ' . $method);
             $this->{$method}();
         }
     }
@@ -83,6 +88,12 @@ class Installer
         Database::connect();
 
         if (!Database::tableExists('users') || $this->reset) {
+            if ($this->reset) {
+                $this->log('Reset database...');
+                Database::fetch(file_get_contents(__DIR__ . '/resources/sql/clear-streamania.sql'));
+            }
+
+            $this->log('Install database...');
             Database::fetch(file_get_contents(__DIR__ . '/resources/sql/streamania.sql'));
 
             $this->installed = true;
@@ -146,6 +157,7 @@ class Installer
             $output .= PHP_EOL;
         }
 
+        $this->log('Writing config file...');
         file_put_contents($file, $output);
     }
 
@@ -155,9 +167,11 @@ class Installer
 
         if (Database::tableExists('videos')) {
             if ($this->reset) {
+                $this->log('Reset demodata...');
                 Database::fetch(file_get_contents(__DIR__ . '/resources/sql/clear-demodata.sql'));
             }
 
+            $this->log('Install demodata...');
             Database::fetch(file_get_contents(__DIR__ . '/resources/sql/demodata.sql'));
 
             $this->installed = true;
@@ -170,5 +184,14 @@ class Installer
     public function resetDatabase(): void
     {
         // @todo vielleicht irgendwann einbinden
+    }
+
+    public function log($message): void
+    {
+        printf(
+            '[%s] %s' . PHP_EOL,
+            date('H:i:s'),
+            $message
+        );
     }
 }

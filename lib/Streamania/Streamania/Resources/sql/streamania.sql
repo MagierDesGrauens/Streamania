@@ -27,7 +27,6 @@ SET time_zone = "+00:00";
 -- Tabellenstruktur für Tabelle `rooms`
 --
 
-DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE `rooms` (
   `rooms_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -43,7 +42,6 @@ CREATE TABLE `rooms` (
 -- Tabellenstruktur für Tabelle `rooms_users`
 --
 
-DROP TABLE IF EXISTS `rooms_users`;
 CREATE TABLE `rooms_users` (
   `rooms_users_id` int(11) NOT NULL,
   `rooms_id` int(11) NOT NULL,
@@ -56,7 +54,6 @@ CREATE TABLE `rooms_users` (
 -- Tabellenstruktur für Tabelle `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `users_id` int(8) NOT NULL,
   `session_id` varchar(255) NOT NULL,
@@ -71,7 +68,6 @@ CREATE TABLE `users` (
 -- Tabellenstruktur für Tabelle `videos`
 --
 
-DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
   `videos_id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
