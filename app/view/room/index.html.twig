@@ -10,36 +10,77 @@
 
 {% block content %}
     <div class="watchtogether">
-        {% if roomId != -1 %}
-            <div class="room">
-                <div class="room__message alert alert-secondary"></div>
-
-                <div class="room__content">
-                    <div class="room__video-content">
-                        <form class="room__link-form">
-                            <label for="room__link">
-                                YouTube Link
-                            </label>
-                            <input class="room__link form-control" id="room__link" type="text" placeholder="YouTube Link" value="https://www.youtube.com/watch?v=TJLKkz7eVjg">
-                            <input class="btn btn-success" type="submit" value="Video laden">
-                        </form>
-
-                        <div id="watchtogehter__video-player" class="watchtogehter__video-player"></div>
-                    </div>
-
-                    <div class="room__user-list">
-                        <div class="room__list-title">
-                            Nutzer im Raum:
-                        </div>
-                    </div>
+        <div class="room">
+            {% if roomId == -1 %}
+                <div class="room__message alert alert-secondary">
+                    Dieser Raum existiert nicht.
                 </div>
-                
-                <div class="room__join">
-                    <button class="btn btn-success room__join-button">Raum betreten</button>
-                </div>
-            </div>
-        {% else %}
-            Dieser Raum existiert nicht.
-        {% endif %}
+            {% else %}
+                {% if createStatus == -1 %}
+                    <div class="room__message alert alert-secondary">
+                        Bitte einen Raumnamen eingeben
+                    </div>
+                {% elseif createStatus == -2 %}
+                    <div class="room__message alert alert-secondary">
+                        Dieser Raumname existiert bereits
+                    </div>
+                {% endif %}
+
+                <h2>Erstellen</h2>
+
+                <form class="room__form-create-room" action="?site=room&action=create" method="POST">
+                    <input class="room__name form-control" id="room__name" type="text" name="name" placeholder="Name des Raums" value="">
+                    <input class="btn btn-success" type="submit" value="Raum erstellen">
+                </form>
+
+                <br>
+
+                <h2>Liste erstellter Räume</h2>
+
+                <table class="table room__table">
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Nutzer
+                        </th>
+                    </tr>
+
+                    {% if rooms|length == 0 %}
+                        <tr>
+                            <td colspan="3">
+                                Keine Räume vorhanden
+                            </td>
+                        </tr>
+                    {% else %}
+                        {% for key, room in rooms %}
+                            <tr class="room__row">
+                                <td class="room__column">
+                                    <a href="{{ WEB_BASE }}?site=room&id={{ key }}" class="room__table-link">
+                                        {{ key }}
+                                    </a>
+                                </td>
+                                <td class="room__column">
+                                    <a href="{{ WEB_BASE }}?site=room&id={{ key }}" class="room__table-link">
+                                        {{ room.name }}
+                                    </a>
+                                </td>
+                                <td class="room__column">
+                                    <a href="{{ WEB_BASE }}?site=room&id={{ key }}" class="room__table-link">
+                                        {% for user in room.users %}
+                                            {{ user }} <br>
+                                        {% endfor %}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

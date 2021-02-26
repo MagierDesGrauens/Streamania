@@ -85,7 +85,7 @@ namespace Watch2Gether
             // Wenn der Benutzer zu einem Raum gehörte
             if (con != null)
             {
-                Sql.query("DELETE FROM rooms_users WHERE room_id='" + con.RoomId + "' AND users_id='" + con.UserId + "'");
+                Sql.query("DELETE FROM rooms_users WHERE  rooms_id='" + con.RoomId + "' AND users_id='" + con.UserId + "'");
 
                 connections.ForEach(c =>
                 {
@@ -104,7 +104,7 @@ namespace Watch2Gether
 
             string strCommand = strCommands[0];
 
-            // room | connect | ROOM_ID | PHPSESSIONID
+            // room | connect |  rooms_id | PHPSESSIONID
             if (strCommand == "room")
             {
                 HandleRoom(strCommands, wss);

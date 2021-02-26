@@ -41,6 +41,11 @@
 
                         {% if LOGGED_IN %}
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ WEB_BASE }}?site=room">
+                                    <i class="bi bi-people-fill"></i> Watch2Gether
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ WEB_BASE }}?site=user&action=logout">
                                     <i class="bi bi-arrow-right-square"></i> Logout
                                 </a>
@@ -94,20 +99,25 @@
         <script src="{{ WEB_BASE }}js/{{ scriptFile }}"></script>
     {% endfor %}
 
-    <script>
-        // Own Video Plugin
-        let video = new VideoPlugin();
-        video.init("{{ WATCH2GETHER_SOCKET_URL }}", {{ WATCH2GETHER_PORT }});
+    {% if roomId >= 0 %}
+        <script>
+            // Own Video Plugin
+            let video = new VideoPlugin();
 
-        // YouTube Player
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/player_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            if (document.querySelector('[data-room]') !== null) {
+                video.init('{{ WATCH2GETHER_SOCKET_URL }}', {{ WATCH2GETHER_PORT }}, {{ roomId }}, '{{ roomVideoSrc }}');
 
-        function onYouTubeIframeAPIReady() {
-            video.initPlayer();
-        }
-    </script>
+                // YouTube Player
+                var tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/player_api";
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+
+            function onYouTubeIframeAPIReady() {
+                video.initPlayer();
+            }
+        </script>
+    {% endif %}
 </body>
 </html>

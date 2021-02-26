@@ -24,13 +24,13 @@ namespace Watch2Gether
 
         public static bool IsInRoom(string roomid, string userid)
         {
-            QueryResult qr = Sql.squery("SELECT users_id FROM rooms_users WHERE room_id='" + roomid + "' AND users_id='" + userid + "'");
+            QueryResult qr = Sql.squery("SELECT users_id FROM rooms_users WHERE rooms_id='" + roomid + "' AND users_id='" + userid + "'");
             return qr.get("user_id").Length > 0;
         }
 
         public static void AddToRoom(string roomid, string userid)
         {
-            Sql.query("INSERT INTO rooms_users (room_id, users_id) VALUES ('" + roomid + "', '" + userid + "')");
+            Sql.query("INSERT INTO rooms_users (rooms_id, users_id) VALUES ('" + roomid + "', '" + userid + "')");
         }
     }
 }

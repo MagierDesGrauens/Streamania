@@ -14,6 +14,7 @@ class VideoPlugin
         this.contentVisibleCls = 'room__content--visible';
 
         this.listeners = [];
+        this.roomId = 0;
         this.socket = null;
         this.player = null;
         this.playerReady = false;
@@ -22,7 +23,10 @@ class VideoPlugin
         this.canSendVideoState = true;
     }
 
-    init(host, port) {
+    init(host, port, roomId) {
+        this.roomId = roomId;
+        this.startupVideoSrc = '';
+
         this.messageEl = document.querySelector(this.messageSelector);
         this.joinEl = document.querySelector(this.joinSelector);
         this.joinButtonEl = document.querySelector(this.joinButtonSelector);
@@ -52,7 +56,7 @@ class VideoPlugin
 
         this.joinEl.classList.add(this.joinVisibleCls);
 
-        this.socket.send('room|connect|1|' + CookiePlugin.get('PHPSESSID'));
+        this.socket.send(`room|connect|${this.roomId}|${CookiePlugin.get('PHPSESSID')}`);
     }
 
     onSocketClose() {
@@ -77,7 +81,7 @@ class VideoPlugin
         this.player = new YT.Player('watchtogehter__video-player', {
             height: '360',
             width: '640',
-            videoId: 'TJLKkz7eVjg',
+            videoId: this.startupVideoSrc,
             events: {
                 'onReady': this.onPlayerReady.bind(this),
                 'onStateChange': this.onPlayerStateChange.bind(this)
@@ -170,7 +174,7 @@ class VideoPlugin
             videoId = videoId.substring(0, ampersandPosition);
         }
 
-        this.socket.send('video|load|' + videoId);
+        this.socket.send(`video|load|${videoId}`);
     }
 
     handleMessage(message) {
