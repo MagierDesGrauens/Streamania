@@ -1,0 +1,9 @@
+{% extends 'template/default.html.twig' %}
+
+{% block content %}
+    Userlist!
+
+    {% for user in names %}
+        {{ user }}
+    {% endfor %}
+{% endblock %}

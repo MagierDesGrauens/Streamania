@@ -1,0 +1,52 @@
+{% extends 'template/default.html.twig' %}
+
+{% block site_title %}
+    Registrierung
+{% endblock %}
+
+{% block content_title %}
+    Registrierung
+{% endblock %}
+
+{% block content %}
+    {% if status == -1 %}
+        <div class="alert alert-warning">
+            <b>Fehler</b>
+            Die Registrierung ist fehlgeschlagen. Bitte alle Felder ausfüllen.
+        </div>
+    {% elseif status == -2 %}
+        <div class="alert alert-warning">
+            <b>Fehler</b>
+            Die Registrierung ist fehlgeschlagen. Diese E-Mail existiert bereits.
+        </div>
+    {% elseif status == -3 %}
+        <div class="alert alert-warning">
+            <b>Fehler</b>
+            Die Registrierung ist fehlgeschlagen. Dieser Benutzername existiert bereits.
+        </div>
+    {% elseif status == 2 %}
+        <div class="alert alert-success">
+            <b>Erfolg</b>
+            Du bist erfolgreich registriert. Logge dich nun ein.
+        </div>
+    {% endif %}
+
+    <form action="{{ WEB_BASE }}/?site=user&action=register" method="post">
+        <label for="username">
+            Benutzername
+        </label>
+        <input type="text" id="username" name="username" value="" placeholder="Benutzername" class="form-control">
+
+        <label for="mail" class="form__label">
+            E-mail
+        </label>
+        <input type="email" id="mail" name="mail" value="" placeholder="E-Mail" class="form-control">
+
+        <label for="pass" class="form__label">
+            Passwort
+        </label>
+        <input type="password" id="pass" name="password" value="" placeholder="Passwort" class="form-control">
+
+        <input type="submit" name="cmdRegister" value="Registrieren" class="btn btn-success btn__register" class="form-control">
+    </form>
+{% endblock %}

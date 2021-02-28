@@ -1,0 +1,37 @@
+{% extends 'template/default.html.twig' %}
+
+{% block site_title %}
+    Login
+{% endblock %}
+
+{% block content_title %}
+    Login
+{% endblock %}
+
+{% block content %}
+    {% if status == -1 %}
+        <div class="alert alert-warning">
+            <b>Fehler</b>
+            Der Login ist fehlgeschlagen.
+        </div>
+    {% elseif status == -2 %}
+        <div class="alert alert-warning">
+            <b>Fehler</b>
+            Du bist bereits eingeloggt.
+        </div>
+    {% endif %}
+
+    <form action="{{ WEB_BASE }}/?site=user&action=login" method="post">
+        <label for="mail">
+            E-mail
+        </label>
+        <input type="email" id="mail" name="mail" value="" placeholder="E-Mail" class="form-control">
+
+        <label for="pass" class="form__label">
+            Passwort
+        </label>
+        <input type="password" id="pass" name="password" value="" placeholder="Passwort" class="form-control">
+
+        <input type="submit" name="cmdLogin" value="Einloggen" class="btn btn-success btn__login" class="form-control">
+    </form>
+{% endblock %}

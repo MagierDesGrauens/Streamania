@@ -1,0 +1,19 @@
+{% extends 'template/default.html.twig' %}
+
+{% block site_title %}
+    Startseite
+{% endblock %}
+
+{% block content_title %}
+    Startseite
+{% endblock %}
+
+{% block content %}
+    {% if LOGGED_IN %}
+        Hallo <b>{{ username }}</b>!<br><br>
+    {% endif %}
+
+    Willkommen bei <i class="bi bi-tv"></i> Streamania - dem Portal für Serien und Filme.<br>
+    <br>
+    Brand-Heißer Shit: Schaut jetzt gemeinsam Videos!
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'template/default.html.twig' %}
+
+{% block site_title %}
+    Konfigurationsfehler
+{% endblock %}
+
+{% block content_title %}
+    Konfigurationsfehler
+{% endblock %}
+
+{% block content %}
+    bin/config.ini has the following errors:<br>
+    <br>
+    {% for error in CONFIG_ERROR_LIST %}
+        Group [{{ error.group }}] does not exists
+        or key "{{ error.key }}" is missing in it.<br/>
+    {% endfor %}
+{% endblock %}

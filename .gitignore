@@ -1,0 +1,6 @@
+bin/config.ini
+lib/*
+!lib/Autoload.php
+!lib/Streamania
+public/css/*
+public/js/*
